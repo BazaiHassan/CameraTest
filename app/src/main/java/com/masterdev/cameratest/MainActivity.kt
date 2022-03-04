@@ -10,6 +10,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import java.io.File
+import java.io.FileOutputStream
 import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity() {
@@ -49,7 +51,27 @@ class MainActivity : AppCompatActivity() {
             if (requestCode == 1001) {
                 val bitmapImage = data?.extras?.get("data") as Bitmap
                 imgCam.setImageBitmap(bitmapImage)
+                saveBitmapImage(bitmapImage)
             }
         }
+    }
+
+    fun saveBitmapImage(bitmap: Bitmap):String{
+        val file  = buildFile("${System.currentTimeMillis()}.jpg")
+        val portal = buildOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,portal)
+        portal.flush()
+        portal.close()
+
+        return file.absolutePath
+    }
+
+    fun buildOutputStream(file:File):FileOutputStream{
+
+        return FileOutputStream(file)
+    }
+
+    fun buildFile(fileName:String):File{
+        return File(this.filesDir, fileName)
     }
 }
